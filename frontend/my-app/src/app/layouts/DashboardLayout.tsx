@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { CalendarDays, Users, BarChart2, LogOut, Settings, Bell, Home } from "lucide-react"
+import { CalendarDays, Users, BarChart2, LogOut, Bell, Home } from "lucide-react"
 
 interface DashboardLayoutProps {
     children: React.ReactNode
