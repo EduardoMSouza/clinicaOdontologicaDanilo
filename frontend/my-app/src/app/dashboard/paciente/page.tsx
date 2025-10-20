@@ -1,31 +1,70 @@
 "use client"
 
-import { useState } from "react"
-import { Users, Search, Plus, Filter, MoreVertical } from "lucide-react"
-
-interface Patient {
-    id: number
-    name: string
-    email: string
-    phone: string
-    lastVisit: string
-    status: 'ativo' | 'inativo'
-}
+import { useEffect, useMemo, useState } from "react"
+import { Search, Plus, Filter, MoreVertical } from "lucide-react"
+import { getPacientes, type PacienteDTO } from "@/lib/api"
 
 export default function PacientePage() {
     const [searchTerm, setSearchTerm] = useState("")
+    const [pacientes, setPacientes] = useState<PacienteDTO[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
-    const patients: Patient[] = [
-        { id: 1, name: "João Silva", email: "joao@email.com", phone: "(11) 99999-9999", lastVisit: "2024-01-15", status: "ativo" },
-        { id: 2, name: "Maria Oliveira", email: "maria@email.com", phone: "(11) 98888-8888", lastVisit: "2024-01-10", status: "ativo" },
-        { id: 3, name: "Pedro Santos", email: "pedro@email.com", phone: "(11) 97777-7777", lastVisit: "2023-12-20", status: "inativo" },
-        { id: 4, name: "Ana Costa", email: "ana@email.com", phone: "(11) 96666-6666", lastVisit: "2024-01-12", status: "ativo" },
-    ]
+    useEffect(() => {
+        let active = true
 
-    const filteredPatients = patients.filter(patient =>
-        patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        patient.email.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+        async function loadPacientes() {
+            try {
+                setLoading(true)
+                const response = await getPacientes()
+                if (!active) return
+                setPacientes(response)
+                setError(null)
+            } catch (err) {
+                if (!active) return
+                const message = err instanceof Error ? err.message : "Não foi possível carregar os pacientes"
+                setError(message)
+            } finally {
+                if (active) setLoading(false)
+            }
+        }
+
+        loadPacientes()
+
+        return () => {
+            active = false
+        }
+    }, [])
+
+    const filteredPacientes = useMemo(() => {
+        const term = searchTerm.trim().toLowerCase()
+        if (!term) return pacientes
+
+        return pacientes.filter((paciente) => {
+            const nome = paciente.nome?.toLowerCase() ?? ""
+            const email = paciente.email?.toLowerCase() ?? ""
+            const cpf = paciente.cpf?.toLowerCase() ?? ""
+            return nome.includes(term) || email.includes(term) || cpf.includes(term)
+        })
+    }, [pacientes, searchTerm])
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-full min-h-[60vh]">
+                <p className="text-gray-600 dark:text-gray-300">Carregando lista de pacientes...</p>
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-full min-h-[60vh]">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-200 px-6 py-4 rounded-lg">
+                    {error}
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="space-y-6">
@@ -46,7 +85,7 @@ export default function PacientePage() {
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <input
                         type="text"
-                        placeholder="Buscar pacientes..."
+                        placeholder="Buscar pacientes por nome, CPF ou e-mail..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -68,13 +107,13 @@ export default function PacientePage() {
                                 Paciente
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                CPF
+                            </th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 Contato
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Última Visita
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                Status
+                                Situação
                             </th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 Ações
@@ -82,47 +121,49 @@ export default function PacientePage() {
                         </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 dark:divide-zinc-600">
-                        {filteredPatients.map((patient) => (
-                            <tr key={patient.id} className="hover:bg-gray-50 dark:hover:bg-zinc-700 transition">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-medium text-sm">
-                                            {patient.name.charAt(0)}
-                                        </div>
-                                        <div className="ml-4">
-                                            <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                                {patient.name}
-                                            </div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                                                {patient.email}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900 dark:text-white">{patient.phone}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm text-gray-900 dark:text-white">
-                                        {new Date(patient.lastVisit).toLocaleDateString('pt-BR')}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        patient.status === 'ativo'
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                    }`}>
-                      {patient.status}
-                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                    <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
-                                        <MoreVertical className="h-4 w-4" />
-                                    </button>
+                        {filteredPacientes.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="px-6 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                                    Nenhum paciente encontrado com os critérios informados.
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            filteredPacientes.map((paciente) => (
+                                <tr key={paciente.id} className="hover:bg-gray-50 dark:hover:bg-zinc-700 transition">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-medium text-sm">
+                                                {paciente.nome?.charAt(0) ?? "?"}
+                                            </div>
+                                            <div className="ml-4">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                    {paciente.nome}
+                                                </div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {paciente.email ?? "E-mail não informado"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900 dark:text-white">{paciente.cpf ?? "---"}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-sm text-gray-900 dark:text-white">{paciente.telefone ?? "Telefone não informado"}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                            Ativo
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                        <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                         </tbody>
                     </table>
                 </div>
