@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OdontoClínica - Dashboard</title>
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+<div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <h1>OdontoClínica</h1>
+                <p>Painel administrativo</p>
+            </div>
+            <button class="close-sidebar" id="closeSidebar">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                <i data-lucide="home"></i>
+                <span>Dashboard</span>
+                <div class="active-indicator"></div>
+            </a>
+            <a href="#pacientes" class="nav-item" data-page="pacientes">
+                <i data-lucide="users"></i>
+                <span>Pacientes</span>
+                <div class="active-indicator"></div>
+            </a>
+            <a href="#agendamentos" class="nav-item" data-page="agendamentos">
+                <i data-lucide="calendar-days"></i>
+                <span>Agendamentos</span>
+                <div class="active-indicator"></div>
+            </a>
+            <a href="#relatorios" class="nav-item" data-page="relatorios">
+                <i data-lucide="bar-chart-2"></i>
+                <span>Relatórios</span>
+                <div class="active-indicator"></div>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="nav-item logout-btn" id="logoutBtn">
+                <i data-lucide="log-out"></i>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Overlay Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-btn" id="menuBtn">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="page-info">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <p id="pageDescription">Visão geral da clínica</p>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <button class="topbar-btn" id="darkModeToggle" title="Alternar modo escuro">
+                    <i data-lucide="moon" class="dark-icon"></i>
+                    <i data-lucide="sun" class="light-icon"></i>
+                </button>
+
+                <button class="topbar-btn notification-btn">
+                    <i data-lucide="bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+
+                <button class="topbar-btn">
+                    <i data-lucide="settings"></i>
+                </button>
+
+                <div class="user-profile">
+                    <div class="avatar">D</div>
+                    <div class="user-info">
+                        <p class="user-name">Dr. Daniel Souza</p>
+                        <p class="user-role">Dentista</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="content" id="content">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard-page">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon patients">
+                            <i data-lucide="users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>128</h3>
+                            <p>Pacientes Ativos</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon appointments">
+                            <i data-lucide="calendar-days"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>12</h3>
+                            <p>Consultas Hoje</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon revenue">
+                            <i data-lucide="dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>R$ 7.480</h3>
+                            <p>Receita do Mês</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon pending">
+                            <i data-lucide="clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Pendências</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-grid">
+                    <div class="card recent-appointments">
+                        <div class="card-header">
+                            <h3>Consultas Recentes</h3>
+                            <a href="#agendamentos" class="view-all">Ver todos</a>
+                        </div>
+                        <div class="card-content">
+                            <div class="appointment-item">
+                                <div class="patient-info">
+                                    <div class="patient-avatar">J</div>
+                                    <div>
+                                        <p class="patient-name">João Silva</p>
+                                        <p class="appointment-time">Hoje, 09:00</p>
+                                    </div>
+                                </div>
+                                <span class="status confirmed">Confirmado</span>
+                            </div>
+                            <div class="appointment-item">
+                                <div class="patient-info">
+                                    <div class="patient-avatar">M</div>
+                                    <div>
+                                        <p class="patient-name">Maria Oliveira</p>
+                                        <p class="appointment-time">Hoje, 10:30</p>
+                                    </div>
+                                </div>
+                                <span class="status pending">Pendente</span>
+                            </div>
+                            <div class="appointment-item">
+                                <div class="patient-info">
+                                    <div class="patient-avatar">P</div>
+                                    <div>
+                                        <p class="patient-name">Pedro Santos</p>
+                                        <p class="appointment-time">Amanhã, 14:00</p>
+                                    </div>
+                                </div>
+                                <span class="status confirmed">Confirmado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card quick-actions">
+                        <div class="card-header">
+                            <h3>Ações Rápidas</h3>
+                        </div>
+                        <div class="card-content">
+                            <button class="action-btn" data-page="pacientes">
+                                <i data-lucide="user-plus"></i>
+                                <span>Novo Paciente</span>
+                            </button>
+                            <button class="action-btn" data-page="agendamentos">
+                                <i data-lucide="calendar-plus"></i>
+                                <span>Novo Agendamento</span>
+                            </button>
+                            <button class="action-btn">
+                                <i data-lucide="file-text"></i>
+                                <span>Emitir Relatório</span>
+                            </button>
+                            <button class="action-btn">
+                                <i data-lucide="message-square"></i>
+                                <span>Enviar Lembrete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pacientes Page -->
+            <div class="page" id="pacientes-page">
+                <div class="page-header">
+                    <h2>Gerenciar Pacientes</h2>
+                    <p>Cadastre e gerencie os pacientes da clínica</p>
+                </div>
+                <!-- Conteúdo dos pacientes será carregado aqui -->
+            </div>
+
+            <!-- Agendamentos Page -->
+            <div class="page" id="agendamentos-page">
+                <div class="page-header">
+                    <h2>Agendamentos</h2>
+                    <p>Controle de consultas e horários</p>
+                </div>
+                <!-- Conteúdo dos agendamentos será carregado aqui -->
+            </div>
+
+            <!-- Relatórios Page -->
+            <div class="page" id="relatorios-page">
+                <div class="page-header">
+                    <h2>Relatórios</h2>
+                    <p>Relatórios e estatísticas da clínica</p>
+                </div>
+                <!-- Conteúdo dos relatórios será carregado aqui -->
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/1.0.0/lucide.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
